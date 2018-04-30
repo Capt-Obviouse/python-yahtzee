@@ -234,8 +234,10 @@ class Game:
                     # END fixing the game
 
                     dice_reroll[i] = ''
-                print("Dice " + str(i+1) + ": " + str(dice[i]))
+                #print("Dice " + str(i+1) + ": " + str(dice[i]))
                 i += 1
+            dice.sort()
+            print(dice)
             if(self.__yahtzee__(dice) == True):
                 print("YAHTZEE!")
                 self.yahtzee_count += 1

@@ -30,18 +30,46 @@ class ScoreCard:
         for x in self.slot:
             if self.slot[x] == -1:
                 print(str(str(x) + " - " + str(self.slot_name[x])))
+    def __get_score__(self):
+
+        #Total up the top
+        top_total = 0
+        i = 1
+        while i < 7:
+            if self.slot[i] > -1:
+                top_total += self.slot[i]
+            i += 1
+        # Add the bonus to the top if it is over 63
+        if top_total >= 63:
+            self.slot['bonus'] = 35
+        self.slot['topTotal'] = top_total + self.slot['bonus']
+        print("Top Total: " + str(self.slot['topTotal']))
+
+        # Total up the bottom
+        bottom_total = 0
+        while i < 14:
+            if self.slot[i] > -1:
+                bottom_total += self.slot[i]
+            i += 1
+        # Count bonus yahtzees
+        bottom_total += self.slot['bonusYahtzeeCount'] * 100
+        self.slot["bottomTotal"] = bottom_total
+        print('Bottom Total: ' + str(self.slot['bottomTotal']))
+        # add top and bottom together
+        self.slot['total'] = self.slot['topTotal'] + self.slot['bottomTotal']
+        print('Game Total: ' + str(self.slot['total']) + "\n")
 
     def __update_score__(self, dice):
         self.success = False
         while self.success == False:
             if game.__yahtzee__(dice):
-                if self.slot[13] != 50:
+                if self.slot[13] == -1:
                     print("Yahtzee Scored!\n")
                     time.sleep(5)
                     self.slot[13] = 50
                     self.success = True
                     break
-                else:
+                elif self.slot[13] == 50:
                      self.slot["bonusYahtzeeCount"] += 1
                      print("Bonus YAHTZEE!")
             inputString = "Where do you want to put this? Type from the following selection: \n "
@@ -142,14 +170,16 @@ class ScoreCard:
                 if total > 0:
                     self.slot[slot] = total
                     print("\n" + str(self.slot_name[slot]) + " score is now: " + str(self.slot[slot]))
+                    self.__get_score__()
                     self.success = True
                 else:
                     if game.__scratch__() == True:
                         self.slot[slot] = 0
                         print("\n" + str(self.slot_name[slot]) + " score is now: " + str(self.slot[slot]))
+                        self.__get_score__()
                         self.success = True
             else:
-                print("\nYou already have something in your " + str(self.slot[slot]) + " box!\n\n")
+                print("\nYou already have something in your " + str(self.slot_name[slot]) + " box!\n\n")
 
 class Game:
     def __init__(self):
@@ -188,6 +218,7 @@ class Game:
         dice = [1,5,2,3,4]
         print("\nRound: " + str(self.round) + "\n")
         print("\n\n")
+        self.scoreCard.__get_score__()
         self.scoreCard.__showOpenSlots__()
         print("\n")
         while rolls < 4:

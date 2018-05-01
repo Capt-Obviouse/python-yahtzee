@@ -78,7 +78,10 @@ class ScoreCard:
             while True:
                 try:
                     slot = int(input())
-                    break
+                    if(slot < 14):
+                        break
+                    else:
+                        print("Please enter a valid number")
                 except:
                     print("Please enter a valid number")
 
@@ -214,7 +217,7 @@ class Game:
     def __start_round__(self):
         self.round += 1
         rolls = 1
-        dice_reroll = ["n","n","n","n","n"]
+        dice_reroll = ["r","r","r","r","r"]
         dice = [1,5,2,3,4]
         print("\nRound: " + str(self.round) + "\n")
         print("\n\n")
@@ -226,14 +229,14 @@ class Game:
             print("=============================")
             i = 0
             while i < 5:
-                if(dice_reroll[i] == "n"):
+                if(dice_reroll[i] == "r"):
                     dice[i] = random.randint(1,6)
 
                     #Fixing the roll remove later
                     #dice[i] = 5
                     # END fixing the game
 
-                    dice_reroll[i] = ''
+                    dice_reroll[i] = 'q'
                 #print("Dice " + str(i+1) + ": " + str(dice[i]))
                 i += 1
             dice.sort()
@@ -245,8 +248,24 @@ class Game:
             if rolls < 3:
                 i = 0
                 while i < 5:
-                    dice_reroll[i] = input("Dice " + str(i+1) + " value: " + str(dice[i]) + " - Type n to re-roll\n")
-                    i += 1
+                    dice_reroll[i] = input("Dice " + str(i+1) + " value: " + str(dice[i]) + " - Type r to re-roll, w to keep, e to re-roll all, q to keep all\n")
+                    if dice_reroll[i] == "q":
+                        a = 0
+                        for x in dice_reroll:
+                            dice_reroll[a] = "w"
+                            a += 1
+                        rolls=2
+                        break
+                    elif dice_reroll[i] == "e":
+                        a = 0
+                        for x in dice_reroll:
+                            dice_reroll[a] = "r"
+                            a += 1
+                        break
+                    elif dice_reroll[i] == "w" or dice_reroll[i] == "r":
+                        i += 1
+                    else:
+                        print("Please enter a valid input");
             else:
                 self.scoreCard.__update_score__(dice)
             rolls += 1
